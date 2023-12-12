@@ -5,7 +5,6 @@ use crate::{
     client::{blink::*, lane::*, relay::*, speed::*, track::*},
     library::{mqtt::*, payload::*, topic::*},
 };
-use ctrlc;
 use rumqttc::Publish;
 use std::{io, sync::mpsc::Receiver, thread, time::Duration};
 
