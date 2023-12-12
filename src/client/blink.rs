@@ -7,10 +7,10 @@ pub struct Blink {
 }
 
 impl Blink {
-    pub fn new(vehicle_list: &Vec<String>) -> Self {
+    pub fn new(vehicle_list: &[String]) -> Self {
         Blink {
             state: false,
-            vehicle_list: vehicle_list.clone(),
+            vehicle_list: vehicle_list.to_owned(),
         }
     }
 
@@ -23,7 +23,7 @@ impl Blink {
 
             for vehicle in &self.vehicle_list {
                 client.publish(
-                    &Topic::Relay(&Topic::VehicleI(&vehicle).get()).get(),
+                    &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
                     &Payload::Lights(self.state, self.state).get(),
                 );
             }

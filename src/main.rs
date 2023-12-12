@@ -24,7 +24,7 @@ fn main() {
     let (mut client, connection) = Mqtt::new("groupg_main");
     let rx = connection.start_loop();
 
-    if vehicle_list.len() == 0 {
+    if vehicle_list.is_empty() {
         discover_vehicles(&mut client, &rx);
     }
 
@@ -47,7 +47,7 @@ fn main() {
 fn connect_vehicles(client: &mut ClientWrapper, vehicle_list: &Vec<String>) {
     for vehicle in vehicle_list {
         client.publish(
-            &Topic::Relay(&Topic::VehicleI(&vehicle).get()).get(),
+            &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
             &Payload::Connect(true).get(),
         );
     }
@@ -92,15 +92,15 @@ fn blocking_emergency_handler(client: &mut ClientWrapper) {
 }
 
 /// Sets up a handler to disconnect vehicles on CTRL+C
-fn set_ctrlc_handler(client: &ClientWrapper, vehicle_list: &Vec<String>) {
+fn set_ctrlc_handler(client: &ClientWrapper, vehicle_list: &[String]) {
     let mut cloned_client = client.arc_clone();
-    let cloned_vehicle_list = vehicle_list.clone();
+    let cloned_vehicle_list = vehicle_list.to_owned();
     ctrlc::set_handler(move || {
         println!("Exiting...");
 
         for vehicle in &cloned_vehicle_list {
             cloned_client.publish(
-                &Topic::Relay(&Topic::VehicleI(&vehicle).get()).get(),
+                &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
                 &Payload::Connect(false).get(),
             );
         }

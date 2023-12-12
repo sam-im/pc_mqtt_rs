@@ -8,11 +8,11 @@ pub struct Speed {
 }
 
 impl Speed {
-    pub fn new(vehicle_list: &Vec<String>) -> Self {
+    pub fn new(vehicle_list: &[String]) -> Self {
         Speed {
             velocity: 0,
             base_velocity: 200,
-            vehicle_list: vehicle_list.clone(),
+            vehicle_list: vehicle_list.to_owned(),
         }
     }
     pub fn run(mut self) -> thread::JoinHandle<()> {
@@ -26,7 +26,7 @@ impl Speed {
 
                 for vehicle in &self.vehicle_list {
                     client.publish(
-                        &Topic::Relay(&Topic::VehicleI(&vehicle).get()).get(),
+                        &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
                         &Payload::Speed(speed, 1000).get(), //&Payload::Speed(500, 1000).get() // for testing
                     );
                 }

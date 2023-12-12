@@ -9,9 +9,9 @@ pub struct Relay {
 }
 
 impl Relay {
-    pub fn new(vehicle_list: &Vec<String>) -> Relay {
+    pub fn new(vehicle_list: &[String]) -> Relay {
         Relay {
-            vehicle_list: vehicle_list.clone(),
+            vehicle_list: vehicle_list.to_owned(),
             emergency: false,
             inside_slow_zone: Vec::new(),
         }
@@ -51,7 +51,7 @@ impl Relay {
 
                 for vehicle in &self.vehicle_list {
                     client.publish(
-                        &Topic::VehicleI(&vehicle).get(),
+                        &Topic::VehicleI(vehicle).get(),
                         &Payload::Speed(speed, 1000).get(),
                     );
                 }
@@ -73,7 +73,7 @@ impl Relay {
                 for vehicle in &prev_inside_slow_zone {
                     if !self.inside_slow_zone.contains(vehicle) {
                         client.publish(
-                            &Topic::VehicleI(&vehicle).get(),
+                            &Topic::VehicleI(vehicle).get(),
                             &Payload::Speed(last_speed, 500).get(),
                         );
                     }
@@ -81,7 +81,7 @@ impl Relay {
 
                 for vehicle in &self.inside_slow_zone {
                     client.publish(
-                        &Topic::VehicleI(&vehicle).get(),
+                        &Topic::VehicleI(vehicle).get(),
                         &Payload::Speed(200, 1000).get(),
                     );
                 }
@@ -96,7 +96,7 @@ impl Relay {
                 }
                 // Extract topic and vehicle ID from message.topic
                 let (_, topic) = message.topic.split_at(Topic::Relay("").get().len());
-                let vehicle_id = topic.split("/").collect::<Vec<&str>>()[3].to_string();
+                let vehicle_id = topic.split('/').collect::<Vec<&str>>()[3].to_string();
 
                 let original_payload =
                     String::from_utf8(message.payload.to_vec()).expect("should be valid utf8");
@@ -124,9 +124,8 @@ impl Relay {
 
     /// Run the client (usually indefinitely) and return it's thread handle
     pub fn run(self) -> thread::JoinHandle<()> {
-        let handle = thread::spawn(move || {
+        thread::spawn(move || {
             self.loop_forever();
-        });
-        handle
+        })
     }
 }

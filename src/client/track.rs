@@ -8,10 +8,10 @@ pub struct Track {
 }
 
 impl Track {
-    pub fn new(vehicle_list: &Vec<String>, slow_tracks: &Vec<u64>) -> Self {
+    pub fn new(vehicle_list: &[String], slow_tracks: &[u64]) -> Self {
         Track {
-            vehicle_list: vehicle_list.clone(),
-            slow_tracks: slow_tracks.clone(),
+            vehicle_list: vehicle_list.to_owned(),
+            slow_tracks: slow_tracks.to_owned(),
             slow_vehicles: Vec::new(),
         }
     }
@@ -20,12 +20,12 @@ impl Track {
         let (mut client, connection) = Mqtt::new("track");
 
         for vehicle in &self.vehicle_list {
-            client.subscribe(&Topic::TrackE(&vehicle).get());
+            client.subscribe(&Topic::TrackE(vehicle).get());
         }
 
         thread::spawn(move || {
             for message in connection.start_loop() {
-                let vehicle_id = message.topic.split("/").collect::<Vec<&str>>()[3].to_string();
+                let vehicle_id = message.topic.split('/').collect::<Vec<&str>>()[3].to_string();
 
                 let track_id = {
                     let payload: serde_json::Value = match serde_json::from_slice(&message.payload)

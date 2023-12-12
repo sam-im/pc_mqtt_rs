@@ -75,7 +75,6 @@ impl ConnectionWrapper {
             for notification in self.connection.iter() {
                 // send over only incoming publish event notifications
                 if let Ok(Event::Incoming(Incoming::Publish(notification))) = notification {
-                    // tx.send(notification).expect("tx failed to send");
                     match tx.send(notification) {
                         Ok(_) => {}
                         Err(e) => {

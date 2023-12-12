@@ -7,10 +7,10 @@ pub struct Lane {
 }
 
 impl Lane {
-    pub fn new(vehicle_list: &Vec<String>) -> Self {
+    pub fn new(vehicle_list: &[String]) -> Self {
         Lane {
             offset: [0, 10, 0, -10],
-            vehicle_list: vehicle_list.clone(),
+            vehicle_list: vehicle_list.to_owned(),
         }
     }
 
@@ -23,7 +23,7 @@ impl Lane {
             loop {
                 for vehicle in &self.vehicle_list {
                     client.publish(
-                        &Topic::Relay(&Topic::VehicleI(&vehicle).get()).get(),
+                        &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
                         &Payload::Lane(self.offset[i], 200, 500).get(), //&Payload::Lane(0, 200, 500).get() // for testing
                     );
                 }
