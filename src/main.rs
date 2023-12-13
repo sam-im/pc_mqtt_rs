@@ -16,10 +16,6 @@ fn main() {
         //String::from("c40caf091413"),
         //String::from("d11d2fea5c74"),
     ];
-    //let vehicle_list: Vec<String> = vec![];
-
-    let slow_tracks = vec![20, 4, 21];
-    let offset = &[0, 10, 0, -10];
 
     // Shared client for functions defined in main.rs
     let (mut client, connection) = Mqtt::new("groupg_main");
@@ -37,8 +33,8 @@ fn main() {
     connect_vehicles(&mut client, &vehicle_list);
     let _blink = Blink::new(&vehicle_list).run();
     let _speed = Speed::new(&[300, 400, 500], &vehicle_list).run();
-    let _lane = Lane::new(offset, &vehicle_list).run();
-    let _track = Track::new(&vehicle_list, &slow_tracks).run();
+    let _lane = Lane::new(&[0, 10, 0, -10], &vehicle_list).run();
+    let _track = Track::new(&vehicle_list, &[20, 4, 21]).run();
 
     set_ctrlc_handler(&client, &vehicle_list);
     blocking_emergency_handler(&mut client);
