@@ -36,7 +36,7 @@ fn main() {
     // Connect to vehicles and start the clients
     connect_vehicles(&mut client, &vehicle_list);
     let _blink = Blink::new(&vehicle_list).run();
-    let _speed = Speed::new(&vehicle_list).run();
+    let _speed = Speed::new(&[300, 400, 500], &vehicle_list).run();
     let _lane = Lane::new(offset, &vehicle_list).run();
     let _track = Track::new(&vehicle_list, &slow_tracks).run();
 
