@@ -97,10 +97,10 @@ impl Relay {
                 let (_, topic) = message.topic.split_at(Topic::Relay("").get().len());
                 let vehicle_id = topic.split('/').collect::<Vec<&str>>()[3].to_string();
 
-                let original_payload =
+                let payload_received =
                     String::from_utf8(message.payload.to_vec()).expect("should be valid utf8");
 
-                let new_payload = if payload["type"] == "speed" {
+                let payload_sent = if payload["type"] == "speed" {
                     self.last_speed = payload["payload"]["velocity"]
                         .as_i64()
                         .expect("should have a valid speed value");
@@ -110,13 +110,13 @@ impl Relay {
                     } else if self.inside_slow_zone.contains(&vehicle_id) {
                         Payload::Speed(200, 1000).get()
                     } else {
-                        original_payload
+                        payload_received
                     }
                 } else {
-                    original_payload
+                    payload_received
                 };
-                client.publish(topic, &new_payload);
-                dbg!(new_payload);
+                client.publish(topic, &payload_sent);
+                dbg!(payload_sent);
             }
         }
     }
