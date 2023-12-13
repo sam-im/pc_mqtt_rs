@@ -11,14 +11,15 @@ use std::{io, sync::mpsc::Receiver, thread, time::Duration};
 fn main() {
     let vehicle_list: Vec<String> = vec![
         String::from("f2e85f2f5770"),
-        String::from("d98ebab7c206"),
-        String::from("c60ee9d05225"),
-        String::from("c40caf091413"),
-        String::from("d11d2fea5c74"),
+        //String::from("d98ebab7c206"),
+        //String::from("c60ee9d05225"),
+        //String::from("c40caf091413"),
+        //String::from("d11d2fea5c74"),
     ];
     //let vehicle_list: Vec<String> = vec![];
 
     let slow_tracks = vec![20, 4, 21];
+    let offset = &[0, 10, 0, -10];
 
     // Shared client for functions defined in main.rs
     let (mut client, connection) = Mqtt::new("groupg_main");
@@ -36,7 +37,7 @@ fn main() {
     connect_vehicles(&mut client, &vehicle_list);
     let _blink = Blink::new(&vehicle_list).run();
     let _speed = Speed::new(&vehicle_list).run();
-    let _lane = Lane::new(&vehicle_list).run();
+    let _lane = Lane::new(offset, &vehicle_list).run();
     let _track = Track::new(&vehicle_list, &slow_tracks).run();
 
     set_ctrlc_handler(&client, &vehicle_list);
