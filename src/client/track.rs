@@ -17,7 +17,7 @@ impl Track {
     }
 
     pub fn run(mut self) -> thread::JoinHandle<()> {
-        let (mut client, connection) = Mqtt::new("track");
+        let (mut client, connection) = Mqtt::new("groupg_track");
 
         for vehicle in &self.vehicle_list {
             client.subscribe(&Topic::TrackE(vehicle).get());
