@@ -6,6 +6,7 @@ pub struct Relay {
     vehicle_list: Vec<String>,
     emergency: bool,
     inside_slow_zone: Vec<String>,
+    last_speed: i64,
 }
 
 impl Relay {
@@ -14,6 +15,7 @@ impl Relay {
             vehicle_list: vehicle_list.to_owned(),
             emergency: false,
             inside_slow_zone: Vec::new(),
+            last_speed: 0,
         }
     }
 
@@ -23,9 +25,6 @@ impl Relay {
         client.subscribe(&Topic::Relay("#").get());
         client.subscribe(&Topic::Emergency.get());
         client.subscribe(&Topic::Zone.get());
-
-        // Fix for delayed behaviour in slow zones
-        let mut last_speed: i16 = 200;
 
         for message in connection.start_loop() {
             let payload_result = serde_json::from_slice(&message.payload);
@@ -74,7 +73,7 @@ impl Relay {
                     if !self.inside_slow_zone.contains(vehicle) {
                         client.publish(
                             &Topic::VehicleI(vehicle).get(),
-                            &Payload::Speed(last_speed, 500).get(),
+                            &Payload::Speed(self.last_speed as i16, 500).get(),
                         );
                     }
                 }
@@ -88,7 +87,7 @@ impl Relay {
 
             // Any other message that will either get relayed or be overwritten
             } else {
-                // Check if message.topic is corrent (that is it has a relayed topic in front)
+                // Check if message.topic is correct (that is, it has a relayed topic in front)
                 // Or continue loop and handle next message
                 if !message.topic.contains(&Topic::Relay("").get()) {
                     dbg!("message topic doesn't have relay prefix");
@@ -102,10 +101,10 @@ impl Relay {
                     String::from_utf8(message.payload.to_vec()).expect("should be valid utf8");
 
                 let new_payload = if payload["type"] == "speed" {
-                    last_speed = payload["payload"]["velocity"]
+                    self.last_speed = payload["payload"]["velocity"]
                         .as_i64()
-                        .expect("should return a valid speed payload")
-                        as i16;
+                        .expect("should have a valid speed value");
+
                     if self.emergency {
                         Payload::Speed(0, 2000).get()
                     } else if self.inside_slow_zone.contains(&vehicle_id) {
@@ -117,7 +116,7 @@ impl Relay {
                     original_payload
                 };
                 client.publish(topic, &new_payload);
-                //dbg!(new_payload);
+                dbg!(new_payload);
             }
         }
     }

@@ -32,14 +32,14 @@ impl Track {
                     {
                         Ok(payload) => payload,
                         Err(e) => {
-                            dbg!("track: {}", e);
+                            dbg!("{}", e);
                             continue;
                         }
                     };
                     match payload["trackId"].as_u64() {
                         Some(track_id) => track_id,
                         None => {
-                            dbg!("track: payload[\"trackId\"] returned None");
+                            dbg!("payload[\"trackId\"] returned None");
                             continue;
                         }
                     }
