@@ -1,9 +1,9 @@
 use pc_mqtt_rs::*;
 use std::{thread, time::Duration};
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let vehicle_list: Vec<String> = vec![
-        String::from("f2e85f2f5770"),
+        //String::from("f2e85f2f5770"),
         //String::from("d98ebab7c206"),
         //String::from("c60ee9d05225"),
         //String::from("c40caf091413"),
@@ -17,7 +17,10 @@ fn main() {
 
     // Discover and print vehicles IDs if none are specified
     if vehicle_list.is_empty() {
-        discover_vehicles(&mut client, &rx);
+        for vehicle in discover_vehicles(&mut client, &rx)? {
+            println!("  {}", vehicle);
+        }
+        std::process::exit(0);
     }
 
     // Start relay first to avoid lost connect messages
@@ -36,5 +39,7 @@ fn main() {
 
     // Block thread and publish emergency messages on keypresses of enter
     blocking_emergency_handler(&mut client);
+
+    Ok(())
 }
 
