@@ -253,7 +253,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
-name = "pc_mqtt"
+name = "pc_mqtt_rs"
 version = "0.1.0"
 dependencies = [
  "ctrlc",

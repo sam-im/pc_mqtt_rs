@@ -1,3 +1,8 @@
+//! This module contains the MQTT client and connection wrappers.
+//!
+//! To create a new client and connection pair use the new function.
+//! To maintain connection and receive incoming publish event notifications use the start_loop function.
+
 #![allow(dead_code)]
 
 use rumqttc::{Client, Connection, Event, Incoming, MqttOptions, Publish, QoS};
@@ -10,6 +15,20 @@ use std::{
 pub struct Mqtt {}
 
 impl Mqtt {
+    /// Creates a new MQTT Client/Connection pair.
+    /// # Example
+    /// ```
+    /// use pc_mqtt_rs::Mqtt;
+    /// 
+    /// let (mut client, connection) = Mqtt::new("doc_test");
+    /// let rx = connection.start_loop();
+    /// 
+    /// client.subscribe("test/topic");
+    /// client.publish("test/topic", "test-payload");
+    /// 
+    /// let received = rx.recv().unwrap().payload;
+    /// assert_eq!(received, "test-payload");
+    /// ```
     pub fn new(client_id: &str) -> (ClientWrapper, ConnectionWrapper) {
         let (client, connection) = Mqtt::init_client(client_id);
         let client = Arc::new(Mutex::new(client));
@@ -69,8 +88,7 @@ pub struct ConnectionWrapper {
 }
 
 impl ConnectionWrapper {
-    /// Iterates over Connection and send incoming publish event notfications over returned receiver
-    /// Will panic if mpsc::channel()'s tx fails to send
+    /// Iterates over Connection and send incoming publish event notifications over returned receiver.
     pub fn start_loop(mut self) -> mpsc::Receiver<Publish> {
         let (tx, rx) = mpsc::channel();
         thread::spawn(move || {

@@ -1,5 +1,5 @@
 [package]
-name = "pc_mqtt"
+name = "pc_mqtt_rs"
 version = "0.1.0"
 edition = "2021"
 

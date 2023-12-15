@@ -1,4 +1,4 @@
-use crate::library::{ClientWrapper, Payload, Topic};
+use crate::{ClientWrapper, Payload, Topic};
 use std::{io, thread, time::Duration, sync::mpsc::Receiver};
 use rumqttc::Publish;
 

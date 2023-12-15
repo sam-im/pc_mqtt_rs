@@ -1,36 +1,4 @@
-//! Executable and library for Process Control Hyperdrive MQTT project.
-//! 
-//! The project folder is divided into two parts:
-//! * client: 
-//! Different client implementations, each with their own thread, that subscribe to topics and publish messages.
-//! 
-//! * library: 
-//! Includes the wrapper API around rumqttc, an util module with small helper functions, and two enums holding topics and payloads. 
-//! 
-//! # Clients
-//! Each client implementation is a struct that holds necessary data about its purpose and a vehicle list to which it should connect. They all initialize a new MQTT client and run in their own thread.
-//! 
-//! ## Relay
-//! The relay client is responsible for relaying messages from every other client to the broker. It also handles emergency messages and slow zone messages, by storing their state and if necessary overwriting speed messages before relaying them.
-//! It needs to be started before any other client, to avoid lost connect messages.
-//! 
-//! ## Blink
-//! Every second it will either turn on or off the lights of each vehicle.
-//! 
-//! ## Speed
-//! Every 3 seconds it will send a speed message to each vehicle, with a speed value from a list of values.
-//! 
-//! ## Lane
-//! Every 5 seconds it will change the lane of each vehicle, with a lane value from a list of values.
-//! 
-//! ## Track
-//! This client keeps track of the current track ID for each vehicle. 
-//! Whenever it receives a message from a vehicle with a track ID, it will store it check it against its list of slow tracks. If the track ID is in the list, it will add the vehicle ID to its list of slow vehicles and publish it to the broker.
-
-mod client;
-mod library;
-
-use crate::{library::*, client::*};
+use pc_mqtt_rs::*;
 use std::{thread, time::Duration};
 
 fn main() {
