@@ -1,12 +1,37 @@
-pub mod client;
-pub mod library;
+//! Executable and library for Process Control Hyperdrive MQTT project.
+//! 
+//! The project folder is divided into two parts:
+//! * client: 
+//! Different client implementations, each with their own thread, that subscribe to topics and publish messages.
+//! 
+//! * library: 
+//! Includes the wrapper API around rumqttc, an util module with small helper functions, and two enums holding topics and payloads. 
+//! 
+//! # Clients
+//! Each client implementation is a struct that holds necessary data about its purpose and a vehicle list to which it should connect. They all initialize a new MQTT client and run in their own thread.
+//! 
+//! ## Relay
+//! The relay client is responsible for relaying messages from every other client to the broker. It also handles emergency messages and slow zone messages, by storing their state and if necessary overwriting speed messages before relaying them.
+//! It needs to be started before any other client, to avoid lost connect messages.
+//! 
+//! ## Blink
+//! Every second it will either turn on or off the lights of each vehicle.
+//! 
+//! ## Speed
+//! Every 3 seconds it will send a speed message to each vehicle, with a speed value from a list of values.
+//! 
+//! ## Lane
+//! Every 5 seconds it will change the lane of each vehicle, with a lane value from a list of values.
+//! 
+//! ## Track
+//! This client keeps track of the current track ID for each vehicle. 
+//! Whenever it receives a message from a vehicle with a track ID, it will store it check it against its list of slow tracks. If the track ID is in the list, it will add the vehicle ID to its list of slow vehicles and publish it to the broker.
 
-use crate::{
-    client::{blink::*, lane::*, relay::*, speed::*, track::*},
-    library::{mqtt::*, payload::*, topic::*},
-};
-use rumqttc::Publish;
-use std::{io, sync::mpsc::Receiver, thread, time::Duration};
+mod client;
+mod library;
+
+use crate::{library::*, client::*};
+use std::{thread, time::Duration};
 
 fn main() {
     let vehicle_list: Vec<String> = vec![
@@ -17,15 +42,17 @@ fn main() {
         //String::from("d11d2fea5c74"),
     ];
 
-    // Shared client for functions defined in main.rs
+    // Shared MQTT client for helper function such as discover_vehicles, connect_vehicles, etc.
     let (mut client, connection) = Mqtt::new("groupg_main");
+    // Channel receiver to receive messages from a connection loop. This specific one is only used by the discover_vehicles function.
     let rx = connection.start_loop();
 
+    // Discover and print vehicles IDs if none are specified
     if vehicle_list.is_empty() {
         discover_vehicles(&mut client, &rx);
     }
 
-    // Starting relay first to avoid lost connect messages (TODO)
+    // Start relay first to avoid lost connect messages
     let _relay = Relay::new(&vehicle_list).run();
     thread::sleep(Duration::from_millis(30)); // Hack for lost connect messages (TODO)
 
@@ -36,74 +63,10 @@ fn main() {
     let _lane = Lane::new(&[0, 10, 0, -10], &vehicle_list).run();
     let _track = Track::new(&vehicle_list, &[20, 4, 21]).run();
 
+    // CTRL+C handler to disconnect vehicles on exit
     set_ctrlc_handler(&client, &vehicle_list);
+
+    // Block thread and publish emergency messages on keypresses of enter
     blocking_emergency_handler(&mut client);
 }
 
-/// Sends Connect(true) to each vehicle.
-fn connect_vehicles(client: &mut ClientWrapper, vehicle_list: &Vec<String>) {
-    for vehicle in vehicle_list {
-        client.publish(
-            &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
-            &Payload::Connect(true).get(),
-        );
-    }
-}
-
-/// Asks for discovered vehicle IDs, prints them, and terminates program.
-fn discover_vehicles(client: &mut ClientWrapper, receiver: &Receiver<Publish>) {
-    println!("No vehicles specified.");
-
-    client.subscribe(&Topic::HostS("vehicles").get());
-    client.publish(&Topic::HostI.get(), &Payload::Discover(true).get());
-
-    let received = receiver.recv().expect("should receive Ok(val)");
-    let payload: serde_json::Value =
-        serde_json::from_slice(&received.payload).expect("should be valid json");
-    let available_vehicles = payload["value"].as_array().expect("should be an array");
-
-    println!("Available vehicles:");
-    for vehicle in available_vehicles {
-        println!("  {}", vehicle);
-    }
-
-    client.publish(&Topic::HostI.get(), &Payload::Discover(false).get());
-
-    thread::sleep(Duration::from_millis(30)); // Check if this is needed
-    std::process::exit(0);
-}
-
-/// Blocks thread and publishes emergency messages on keypress of enter
-fn blocking_emergency_handler(client: &mut ClientWrapper) {
-    let mut input = String::new();
-    let mut state = false;
-
-    println!("main: Press enter to toggle emergency state");
-    loop {
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-        state = !state;
-        client.publish(&Topic::Emergency.get(), &Payload::Emergency(state).get());
-    }
-}
-
-/// Sets up a handler to disconnect vehicles on CTRL+C
-fn set_ctrlc_handler(client: &ClientWrapper, vehicle_list: &[String]) {
-    let mut cloned_client = client.arc_clone();
-    let cloned_vehicle_list = vehicle_list.to_owned();
-    ctrlc::set_handler(move || {
-        println!("Exiting...");
-
-        for vehicle in &cloned_vehicle_list {
-            cloned_client.publish(
-                &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
-                &Payload::Connect(false).get(),
-            );
-        }
-
-        thread::sleep(Duration::from_secs_f32(0.1));
-        std::process::exit(0);
-    })
-    .expect("Error setting Ctrl-C handler");
-}
