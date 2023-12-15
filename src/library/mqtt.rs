@@ -51,6 +51,9 @@ impl Mqtt {
         (client, connection)
     }
 }
+
+/// Rumqttc client wrapper.
+/// It wraps the client in an Arc<Mutex<>> to allow sharing it between threads safely.
 pub struct ClientWrapper {
     client: Arc<Mutex<Client>>,
 }
