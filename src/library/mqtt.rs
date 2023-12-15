@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use rumqttc::{Client, Connection, Event, Incoming, MqttOptions, Publish, QoS};
 use std::{
     sync::{mpsc, Arc, Mutex},
