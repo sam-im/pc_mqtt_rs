@@ -24,6 +24,8 @@ pub fn discover_vehicles(client: &mut ClientWrapper, receiver: &Receiver<Publish
     
     client.publish(&Topic::HostI.get(), &Payload::Discover(false).get());
 
+    // Test if necessary (TODO)
+    std::thread::sleep(Duration::from_millis(30));
     Ok(available_vehicles)
 }
 
