@@ -36,7 +36,12 @@ pub use self::library::{
     mqtt::{Mqtt, ClientWrapper, ConnectionWrapper},
     topic::Topic,
     payload::Payload,
-    util::*,
+    util::{
+        discover_vehicles,
+        connect_vehicles,
+        set_ctrlc_handler,
+        blocking_emergency_handler,
+    }
 };
 
 pub use self::client::{
