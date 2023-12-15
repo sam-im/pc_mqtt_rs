@@ -1,3 +1,13 @@
+//! Track module which also includes the personal addition.
+//! 
+//! The fields of the struct are:
+//! * vehicle_list: A list of vehicle IDs that this client should connect to.
+//! * slow_tracks: A list of track IDs that the vehicles should go slower (velocity 200).
+//! * slow_vehicles: A list of vehicle IDs that are currently on the said slow tracks.
+//! 
+//! This client subscribes to the event topic of each vehicle, receiving track ID messages.
+//! The client will only publish messages if there are any changes to the slow_vehicles list.
+
 use crate::library::{mqtt::Mqtt, payload::Payload, topic::Topic};
 use std::thread;
 
