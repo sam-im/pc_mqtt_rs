@@ -19,13 +19,13 @@ impl Mqtt {
     /// # Example
     /// ```
     /// use pc_mqtt_rs::Mqtt;
-    /// 
+    ///
     /// let (mut client, connection) = Mqtt::new("doc_test");
     /// let rx = connection.start_loop();
-    /// 
+    ///
     /// client.subscribe("test/topic");
     /// client.publish("test/topic", "test-payload");
-    /// 
+    ///
     /// let received = rx.recv().unwrap().payload;
     /// assert_eq!(received, "test-payload");
     /// ```
