@@ -1,6 +1,6 @@
 use crate::{ClientWrapper, Payload, Topic};
-use std::{io, thread, time::Duration, sync::mpsc::Receiver};
 use rumqttc::Publish;
+use std::{io, sync::mpsc::Receiver, thread, time::Duration};
 
 /// Sends Connect(true) to each vehicle.
 pub fn connect_vehicles(client: &mut ClientWrapper, vehicle_list: &Vec<String>) {
@@ -13,15 +13,23 @@ pub fn connect_vehicles(client: &mut ClientWrapper, vehicle_list: &Vec<String>) 
 }
 
 /// Asks for discovered vehicle IDs, prints them, and terminates program.
-pub fn discover_vehicles(client: &mut ClientWrapper, receiver: &Receiver<Publish>) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+pub fn discover_vehicles(
+    client: &mut ClientWrapper,
+    receiver: &Receiver<Publish>,
+) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     println!("No vehicles specified. \nDiscovering vehicles...");
     client.subscribe(&Topic::HostS("vehicles").get());
     client.publish(&Topic::HostI.get(), &Payload::Discover(true).get());
 
     let received_payload = receiver.recv()?.payload;
     let payload: serde_json::Value = serde_json::from_slice(&received_payload)?;
-    let available_vehicles = payload["value"].as_array().ok_or("None error")?.iter().map(|v| v.as_str().expect("Should be valid UTF-8").to_string()).collect::<Vec<String>>();
-    
+    let available_vehicles = payload["value"]
+        .as_array()
+        .ok_or("None error")?
+        .iter()
+        .map(|v| v.as_str().expect("Should be valid UTF-8").to_string())
+        .collect::<Vec<String>>();
+
     client.publish(&Topic::HostI.get(), &Payload::Discover(false).get());
 
     // Test if necessary (TODO)
