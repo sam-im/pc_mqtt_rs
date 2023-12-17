@@ -1,6 +1,6 @@
 //! This module contains the MQTT client and connection wrappers.
 //!
-//! To create a new client and connection pair use the new function.
+//! To create a new client and connection pair use the "new" function.
 //! To maintain connection and receive incoming publish event notifications use the start_loop function.
 
 #![allow(dead_code)]
@@ -52,8 +52,7 @@ impl Mqtt {
     }
 }
 
-/// Rumqttc client wrapper.
-/// It wraps the client in an Arc<Mutex<>> to allow sharing it between threads safely.
+/// Rumqttc client wrapper, wraps the client in an Arc<Mutex<>> to allow sharing it between threads safely.
 pub struct ClientWrapper {
     client: Arc<Mutex<Client>>,
 }

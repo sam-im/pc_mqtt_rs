@@ -12,7 +12,7 @@ pub fn connect_vehicles(client: &mut ClientWrapper, vehicle_list: &Vec<String>) 
     }
 }
 
-/// Asks for discovered vehicle IDs, prints them, and terminates program.
+/// Asks for discovered vehicle IDs and prints them to stdout.
 pub fn discover_vehicles(
     client: &mut ClientWrapper,
     receiver: &Receiver<Publish>,
@@ -37,7 +37,7 @@ pub fn discover_vehicles(
     Ok(available_vehicles)
 }
 
-/// Blocks thread and publishes emergency messages on keypresses of enter
+/// Blocks thread and publishes emergency messages on the keypress of enter.
 pub fn blocking_emergency_handler(client: &mut ClientWrapper) {
     let mut input = String::new();
     let mut state = false;
@@ -52,7 +52,7 @@ pub fn blocking_emergency_handler(client: &mut ClientWrapper) {
     }
 }
 
-/// Sets up a handler to disconnect vehicles on CTRL+C
+/// Sets up a handler to disconnect vehicles on CTRL+C.
 pub fn set_ctrlc_handler(client: &ClientWrapper, vehicle_list: &[String]) {
     let mut cloned_client = client.arc_clone();
     let cloned_vehicle_list = vehicle_list.to_owned();

@@ -1,5 +1,9 @@
+//! This module contains payloads/messages used in the project, making it both easier to use and change them later on.
+
 #![allow(dead_code)]
 use serde_json::json;
+
+/// An enum that holds most of the payloads/messagess used in the project.
 pub enum Payload<'a> {
     Speed(i16, u16),
     Connect(bool),
@@ -11,6 +15,13 @@ pub enum Payload<'a> {
 }
 
 impl Payload<'_> {
+    /// Formats hardcoded payload strings with the values inside the enum instances, if any.
+    /// # Example
+    /// ```
+    /// use pc_mqtt_rs::Payload;
+    ///
+    /// assert_eq!(Payload::Speed(200, 1000).get(), String::from(r#"{"type":"speed","payload":{"velocity": 200,"acceleration": 1000}}"#));
+    /// ```
     pub fn get(&self) -> String {
         match self {
             Payload::Speed(vel, acc) => {

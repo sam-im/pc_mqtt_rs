@@ -1,5 +1,8 @@
+//! This module contains the topics, making it both easier to use and change them later on.
+
 #![allow(dead_code)]
 
+/// An enum that holds almost all the topics used in the project.
 pub enum Topic<'a> {
     HostI,
     HostS(&'a str),
@@ -13,6 +16,13 @@ pub enum Topic<'a> {
 }
 
 impl Topic<'_> {
+    /// Formats hardcoded topic strings with the values inside the enum instances, if any.
+    /// # Example
+    /// ```
+    /// use pc_mqtt_rs::Topic;
+    ///
+    /// assert_eq!(Topic::VehicleI("test").get(), String::from("Anki/Vehicles/U/test/I"));
+    /// ```
     pub fn get(self) -> String {
         match self {
             Topic::HostI => String::from("Anki/Hosts/U/hyperdrive/I"),
