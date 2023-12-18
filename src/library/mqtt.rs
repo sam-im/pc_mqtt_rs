@@ -36,10 +36,10 @@ impl Mqtt {
     }
 
     fn set_options(client_id: &str) -> MqttOptions {
-        //let mut options = MqttOptions::new(client_id, "192.168.4.1", 1883);
-        let mut options = MqttOptions::new(client_id, "147.87.116.34", 1883); // For the non-PI broker
+        let mut options = MqttOptions::new(client_id, "192.168.4.1", 1883);
+        //let mut options = MqttOptions::new(client_id, "147.87.116.34", 1883); // For the non-PI broker
         options
-            .set_credentials("cedalo", "gCgZnxzl3liLFPCe5Vom2t5Ha") // For the non-PI broker
+        //    .set_credentials("cedalo", "gCgZnxzl3liLFPCe5Vom2t5Ha") // For the non-PI broker
             .set_transport(rumqttc::Transport::Tcp)
             .set_keep_alive(Duration::from_secs(60));
 
