@@ -2,7 +2,7 @@ use pc_mqtt_rs::*;
 use std::{thread, time::Duration};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // CONFIG START
+    // CONFIG START HERE
     let vehicle_list: Vec<String> = vec![
         String::from("f4c22c6c0382"),
         //String::from("cec233dec1cb"),
@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let speed_list = vec![500];
     let lane_list = vec![0];
     let slow_tracks = vec![20, 4, 21];
-    // CONFIG END
+    // CONFIG END HERE
 
     // Shared MQTT client for helper function such as discover_vehicles, connect_vehicles, etc.
     let (mut client, connection) = Mqtt::new("groupg_main");
