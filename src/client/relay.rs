@@ -132,7 +132,7 @@ impl Relay {
                     payload_received
                 };
                 client.publish(topic, &payload_sent);
-                dbg!(payload_sent);
+                //dbg!(payload_sent);
             }
         }
     }
