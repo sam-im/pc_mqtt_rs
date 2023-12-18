@@ -41,10 +41,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _relay = Relay::new(&vehicle_list).run();
     thread::sleep(Duration::from_millis(30)); // Hack for lost connect messages (TODO)
 
-    // Connect to vehicles and start the clients
     connect_vehicles(&mut client, &vehicle_list);
     let _blink = Blink::new(&vehicle_list).run();
-    //let _speed = Speed::new(&[300, 400, 500], &vehicle_list).run();
     let _speed = Speed::new(&speed_list, &vehicle_list).run();
     let _lane = Lane::new(&lane_list, &vehicle_list).run();
     let _track = Track::new(&vehicle_list, &slow_tracks).run();
