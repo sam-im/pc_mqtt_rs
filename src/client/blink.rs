@@ -1,3 +1,4 @@
+//! The blink module is the simplest of the three steering controllers. When run it will toggle the lights of all vehicles in the vehicle list every second. The current state of the lights are stored in the state field.
 use crate::library::{mqtt::Mqtt, payload::Payload, topic::Topic};
 use std::{thread, time::Duration};
 
