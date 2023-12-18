@@ -12,7 +12,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         //String::from("c40caf091413"),
         //String::from("d11d2fea5c74"),
     ];
-    
+
     // For steering and track demonstration
     //let speed_list = vec![300, 400, 500];
     //let lane_list = vec![-30, 0];

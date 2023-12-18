@@ -1,13 +1,17 @@
+//! This lane module is part of the steering controller.
+//!
+//! This module lane contains the Lane struct and its implementation.
 use crate::library::{mqtt::Mqtt, payload::Payload, topic::Topic};
 use std::{thread, time::Duration};
 
+/// Struct holding the offsets and a list of vehicles.
 pub struct Lane {
-    offsets: Vec<i16>,
     vehicles: Vec<String>,
+    offsets: Vec<i16>,
 }
 
 impl Lane {
-    /// Returns a new instance of Lane.
+    /// Creates a new instance of Lane.
     pub fn new(offsets: &[i16], vehicles: &[String]) -> Self {
         Lane {
             offsets: offsets.to_owned(),

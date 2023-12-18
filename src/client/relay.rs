@@ -5,7 +5,7 @@ use serde_json;
 use std::thread::{self};
 
 /// The Relay struct holds a list of vehicle IDs, the emergency state, a list of vehicles inside a slow zone, and the last speed value.
-/// 
+///
 /// Everything except the vehicle list is updated by incoming messages.
 pub struct Relay {
     vehicle_list: Vec<String>,
@@ -26,15 +26,15 @@ impl Relay {
     }
 
     /// Handles all incoming messages and relays them to the correct recipient.
-    /// 
-    /// This method is called in a loop, hence the name. 
-    /// 
+    ///
+    /// This method is called in a loop, hence the name.
+    ///
     /// The first thing it does is to create its own MQTT client and subscribe to the correct topics.
-    /// 
+    ///
     /// Then it iterates over all incoming messages and checks if they are either Emergency ("GroupG/Emergency/I"), Zone ("GroupG/Zone/I") or Relay ("GroupG/Relay/") messages.
-    /// 
+    ///
     /// Emergency and Zone messages are handled by updating the state of the Relay struct with the message payload's value.
-    /// 
+    ///
     /// Relay messages are handled by either relaying them as is, or by selectively overwriting them with a new speed.
     fn loop_forever(mut self) {
         let (mut client, connection) = Mqtt::new("group-g_relay");

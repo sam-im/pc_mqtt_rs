@@ -1,3 +1,4 @@
+//! Utility functions that are removed from main.rs.
 use crate::{ClientWrapper, Payload, Topic};
 use rumqttc::Publish;
 use std::{io, sync::mpsc::Receiver, thread, time::Duration};
