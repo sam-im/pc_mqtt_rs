@@ -2,13 +2,27 @@ use pc_mqtt_rs::*;
 use std::{thread, time::Duration};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // CONFIG START
     let vehicle_list: Vec<String> = vec![
+        String::from("f4c22c6c0382"),
+        //String::from("cec233dec1cb"),
         //String::from("f2e85f2f5770"),
         //String::from("d98ebab7c206"),
         //String::from("c60ee9d05225"),
         //String::from("c40caf091413"),
         //String::from("d11d2fea5c74"),
     ];
+    
+    // For steering and track demonstration
+    //let speed_list = vec![300, 400, 500];
+    //let lane_list = vec![-30, 0];
+    //let slow_tracks = vec![];
+
+    // For personal addition demonstration
+    let speed_list = vec![500];
+    let lane_list = vec![0];
+    let slow_tracks = vec![20, 4, 21];
+    // CONFIG END
 
     // Shared MQTT client for helper function such as discover_vehicles, connect_vehicles, etc.
     let (mut client, connection) = Mqtt::new("groupg_main");
@@ -30,9 +44,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Connect to vehicles and start the clients
     connect_vehicles(&mut client, &vehicle_list);
     let _blink = Blink::new(&vehicle_list).run();
-    let _speed = Speed::new(&[300, 400, 500], &vehicle_list).run();
-    let _lane = Lane::new(&[0, 10, 0, -10], &vehicle_list).run();
-    let _track = Track::new(&vehicle_list, &[20, 4, 21]).run();
+    //let _speed = Speed::new(&[300, 400, 500], &vehicle_list).run();
+    let _speed = Speed::new(&speed_list, &vehicle_list).run();
+    let _lane = Lane::new(&lane_list, &vehicle_list).run();
+    let _track = Track::new(&vehicle_list, &slow_tracks).run();
 
     // CTRL+C handler to disconnect vehicles on exit
     set_ctrlc_handler(&client, &vehicle_list);

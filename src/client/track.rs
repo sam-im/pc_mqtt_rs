@@ -30,31 +30,60 @@ impl Track {
         let (mut client, connection) = Mqtt::new("groupg_track");
 
         for vehicle in &self.vehicle_list {
-            client.subscribe(&Topic::TrackE(vehicle).get());
+            client.subscribe(&Topic::VehicleE(vehicle, "track").get());
+            client.subscribe(&Topic::VehicleE(vehicle, "wheelDistance").get());
         }
 
         thread::spawn(move || {
+            let mut track_id: u64 = 0;
+            let mut prev_track_id: u64 = 0;
+            let mut is_turning: bool = false;
             for message in connection.start_loop() {
                 let vehicle_id = message.topic.split('/').collect::<Vec<&str>>()[3].to_string();
-
-                let track_id = {
-                    let payload: serde_json::Value = match serde_json::from_slice(&message.payload)
-                    {
-                        Ok(payload) => payload,
-                        Err(e) => {
-                            dbg!("{}", e);
-                            continue;
-                        }
-                    };
-                    match payload["trackId"].as_u64() {
-                        Some(track_id) => track_id,
-                        None => {
-                            dbg!("payload[\"trackId\"] returned None");
-                            continue;
-                        }
+                let payload: serde_json::Value = match serde_json::from_slice(&message.payload)
+                {
+                    Ok(payload) => payload,
+                    Err(e) => {
+                        dbg!("{}", e);
+                        continue;
                     }
                 };
-                dbg!(&track_id);
+
+                if message.topic.contains("track") {
+                    prev_track_id = track_id.clone();
+                    track_id = {
+                        match payload["trackId"].as_u64() {
+                            Some(track_id) => track_id,
+                            None => {
+                                dbg!("payload[\"trackId\"] returned None");
+                                continue;
+                            }
+                        }
+                    };
+                } else if message.topic.contains("wheelDistance") {
+                    let left = {
+                        match payload["left"].as_i64() {
+                            Some(left) => left,
+                            None => {
+                                dbg!("left returned None");
+                                continue;
+                            }
+                        }
+                    };
+                    let right = {
+                        match payload["right"].as_i64() {
+                            Some(right) => right,
+                            None => {
+                                dbg!("right returned None");
+                                continue;
+                            }
+                        }
+                    };
+                    is_turning = if (left - right).abs() > 4 {true} else {false};
+                }
+                if track_id != prev_track_id {
+                    println!("track: {}, is_turning: {}", track_id, is_turning);
+                }
 
                 // Update and publish slow_vehicles list only if necessary
                 if self.slow_tracks.contains(&track_id) && !self.slow_vehicles.contains(&vehicle_id)
