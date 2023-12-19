@@ -71,6 +71,12 @@ impl Track {
                             }
                         }
                     };
+
+                    // Print track_id and is_turning only if the track has changed.
+                    if track_id != prev_track_id {
+                        println!("track: {}, is_turning: {}", track_id, is_turning);
+                    }
+
                 } else if message.topic.contains("wheelDistance") {
                     let left = {
                         match payload["left"].as_i64() {
@@ -95,9 +101,6 @@ impl Track {
                     } else {
                         false
                     };
-                }
-                if track_id != prev_track_id {
-                    println!("track: {}, is_turning: {}", track_id, is_turning);
                 }
 
                 // Update and publish slow_vehicles list only if necessary

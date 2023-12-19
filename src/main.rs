@@ -4,9 +4,9 @@ use std::{thread, time::Duration};
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // CONFIG START HERE
     let vehicle_list: Vec<String> = vec![
-        String::from("f4c22c6c0382"),
+        //String::from("f4c22c6c0382"),
         //String::from("cec233dec1cb"),
-        //String::from("f2e85f2f5770"),
+        String::from("f2e85f2f5770"),
         //String::from("d98ebab7c206"),
         //String::from("c60ee9d05225"),
         //String::from("c40caf091413"),
