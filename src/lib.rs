@@ -1,6 +1,8 @@
 //! Process Control Hyperdrive MQTT project (Rust version)
 //!
 //! This documentation can either be read from the source code or by using the "doc/index.html" (recommended). The latter was generated using "cargo doc" and can be found in the "doc" folder.
+//! 
+//! [Video demonstration link - Google Drive](https://drive.google.com/file/d/1ivpBfDTXD7pe8Fv8COzepab6ASXwm5Hu/view?usp=sharing)
 //!
 //! The project consists of 4 parts:
 //! * Steering controller (blink, speed, lane)

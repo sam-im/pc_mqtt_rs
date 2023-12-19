@@ -6,22 +6,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let vehicle_list: Vec<String> = vec![
         //String::from("f4c22c6c0382"),
         //String::from("cec233dec1cb"),
-        String::from("f2e85f2f5770"),
-        //String::from("d98ebab7c206"),
+        //String::from("f2e85f2f5770"),
+        String::from("d98ebab7c206"),
         //String::from("c60ee9d05225"),
         //String::from("c40caf091413"),
         //String::from("d11d2fea5c74"),
     ];
 
     // For steering and track demonstration
-    let speed_list = vec![300, 400, 500];
-    let lane_list = vec![-20, 0];
-    let slow_tracks = vec![];
+    //let speed_list = vec![300, 400, 500];
+    //let lane_list = vec![-20, 0];
+    //let slow_tracks = vec![];
 
     // For personal addition demonstration
-    //let speed_list = vec![500];
-    //let lane_list = vec![0];
-    //let slow_tracks = vec![20, 4, 21];
+    let speed_list = vec![500];
+    let lane_list = vec![0];
+    let slow_tracks = vec![20, 4, 21];
     // CONFIG END HERE
 
     // Shared MQTT client for helper function such as discover_vehicles, connect_vehicles, etc.
