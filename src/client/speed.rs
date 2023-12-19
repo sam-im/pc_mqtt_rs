@@ -33,7 +33,7 @@ impl Speed {
                 for vehicle in &self.vehicle_list {
                     client.publish(
                         &Topic::Relay(&Topic::VehicleI(vehicle).get()).get(),
-                        &Payload::Speed(self.velocity_list[i], 1000).get(),
+                        &Payload::Speed(self.velocity_list[i], 500).get(),
                     );
                 }
                 i = (i + 1) % self.velocity_list.len();

@@ -47,7 +47,7 @@ impl Track {
 
         thread::spawn(move || {
             let mut track_id: u64 = 0;
-            let mut prev_track_id: u64 = 0;
+            let mut prev_track_id: u64;
             let mut is_turning: bool = false;
 
             for message in connection.start_loop() {

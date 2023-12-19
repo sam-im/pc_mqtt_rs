@@ -14,14 +14,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     // For steering and track demonstration
-    //let speed_list = vec![300, 400, 500];
-    //let lane_list = vec![-30, 0];
-    //let slow_tracks = vec![];
+    let speed_list = vec![300, 400, 500];
+    let lane_list = vec![-20, 0];
+    let slow_tracks = vec![];
 
     // For personal addition demonstration
-    let speed_list = vec![500];
-    let lane_list = vec![0];
-    let slow_tracks = vec![20, 4, 21];
+    //let speed_list = vec![500];
+    //let lane_list = vec![0];
+    //let slow_tracks = vec![20, 4, 21];
     // CONFIG END HERE
 
     // Shared MQTT client for helper function such as discover_vehicles, connect_vehicles, etc.
